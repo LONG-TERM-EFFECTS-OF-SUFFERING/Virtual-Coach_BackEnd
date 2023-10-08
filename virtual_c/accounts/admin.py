@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin  # Import the default UserAdmin
 from .models import UserAccount
 
+
 class CustomUserAdmin(UserAdmin):
     list_display = ('email','name', 'is_active', 'is_staff')
     list_filter = ('is_active', 'is_staff')
