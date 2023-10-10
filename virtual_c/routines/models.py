@@ -9,7 +9,9 @@ class Exercise(models.Model):
         return self.name
 
 class Routine(models.Model):
+    name = models.CharField(max_length=255, default="My routine")
     time = models.BigIntegerField()
+    description = models.CharField(max_length=255, null=True)
     exercises_number = models.IntegerField()
     exercise = models.ManyToManyField(Exercise, through='Routine_has_exercise', blank=True)
     def __str__(self):
