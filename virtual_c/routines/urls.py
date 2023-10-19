@@ -11,5 +11,5 @@ router.register(r"routine", views.RoutineView, "Routine")
 
 urlpatterns = [
     path("api/", include(router.urls)),
-    path('docs/', include_docs_urls(title='Routine API')),
+    #path('docs/', include_docs_urls(title='Routine API')),
 ]
