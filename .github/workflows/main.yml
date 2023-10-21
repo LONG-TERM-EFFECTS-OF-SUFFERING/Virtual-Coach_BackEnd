@@ -30,5 +30,7 @@ jobs:
 
       - name: Testing development server
         run: |
+          echo "Going to virtual_c"
+          cd virtual_c
           echo "Running tests"
           python manage.py test
