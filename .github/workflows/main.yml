@@ -24,11 +24,11 @@ jobs:
       - name: Install requirements
         run: pip install -r requirements.txt
 
-      - name: Test if Django runs the development server
+      - name: Creating env file
         run: |
-          echo "Going to  virtual_c folder"
-          cd virtual_c
-          echo "Executing development server"
-          python manage.py runserver
+        echo "${{ secrets.ENV_FILE }}" > .env
 
-    
+      - name: Testing development server
+        run: |
+          echo "Running tests"
+          python manage.py test
