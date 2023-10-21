@@ -15,7 +15,7 @@ class Routine(models.Model):
     exercises_number = models.IntegerField()
     exercise = models.ManyToManyField(Exercise, through='Routine_has_exercise', blank=True)
     def __str__(self):
-        return "routine #"+self.id
+        return "routine #"+str(self.id)
 
 class User_has_Routine(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
