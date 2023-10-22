@@ -21,6 +21,9 @@ class User_has_Routine(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     routine = models.ForeignKey(Routine, on_delete = models.CASCADE)
 
+    class Meta:
+        unique_together = ('user', 'routine')
+
 class Routine_has_exercise(models.Model):
     routine = models.ForeignKey(Routine, on_delete = models.CASCADE, blank=True, null=True)
     exercise = models.ForeignKey(Exercise, on_delete = models.CASCADE, blank=True, null=True)

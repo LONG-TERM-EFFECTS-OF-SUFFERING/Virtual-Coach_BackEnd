@@ -7,10 +7,11 @@ router = routers.DefaultRouter()
 router.register(r"exercise", views.ExerciseView, "Exercise")
 router.register(r"routine", views.RoutineView, "Routine")
 router.register(r"User_has_Routine", views.User_has_RoutineView, "User_has_Routine")
-# router.register(r"Routine_has_exerciseView", views.Routine_has_exerciseView, "Routine_has_exerciseView")
+router.register(r"Routine_has_exercise", views.Routine_has_exerciseView, "Routine_has_exercise")
 
 urlpatterns = [
     path("api/", include(router.urls)),
     path('docs/', include_docs_urls(title='Routine API')),
     path("api/get-user-routines/<str:email>", views.get_user_routines, name='get user routines'),
+    path("api/get-routine-exercises/<int:routine>", views.get_routine_exercises, name='get routine exercises'),
 ]

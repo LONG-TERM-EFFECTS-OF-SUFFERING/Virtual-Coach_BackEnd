@@ -7,7 +7,6 @@ from .serializer import User_has_RoutineSerializer
 from .serializer import Routine_has_exerciseSerializer
 from .models import Exercise
 from .models import Routine
-from .models import Exercise
 from .models import User_has_Routine
 from .models import Routine_has_exercise
 
@@ -34,6 +33,15 @@ def get_user_routines(request, email):
     queryset = User_has_Routine.objects.all()
     user_routines = queryset.filter(user__email = email)
     serializer = User_has_RoutineSerializer(user_routines, many=True)
+    print(queryset)
+
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def get_routine_exercises(request, routine):
+    queryset = Routine_has_exercise.objects.all()
+    routine_exercises = queryset.filter(routine_id = routine)
+    serializer = Routine_has_exerciseSerializer(routine_exercises)
     print(queryset)
 
     return Response(serializer.data)
