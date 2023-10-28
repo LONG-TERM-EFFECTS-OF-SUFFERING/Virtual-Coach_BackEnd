@@ -22,7 +22,7 @@ jobs:
         run: sudo apt install python3-pip
 
       - name: Install requirements
-        run: pip install -r requirements.txt
+        run: pip install -r virtual_c/requirements.txt
 
       - name: Creating env file
         run: |
