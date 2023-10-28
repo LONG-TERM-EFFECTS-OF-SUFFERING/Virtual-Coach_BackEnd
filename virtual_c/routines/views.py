@@ -16,6 +16,7 @@ class DynamicDepthViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         context = super().get_serializer_context()
         depth = 0
+
         try:
             depth = int(self.request.query_params.get('depth', 0))
         except ValueError:
