@@ -1,4 +1,4 @@
-from rest_framework import viewsets, serializers
+from rest_framework import viewsets, serializers, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializer import DynamicDepthSerializer
@@ -47,16 +47,22 @@ class Routine_has_exerciseView(DynamicDepthViewSet):
 def get_user_routines(request, email):
     queryset = User_has_Routine.objects.all()
     user_routines = queryset.filter(user__email = email)
-    serializer = User_has_RoutineSerializer(user_routines, many=True)
-    print(queryset)
+    depth = 0
 
-    return Response(serializer.data)
+    try:
+        depth = int(request.query_params.get('depth', 0))
+    except ValueError:
+        pass # Ignore non-numeric parameters and keep default 0 depth
+
+    serialized = User_has_RoutineSerializer(user_routines, many=True, context={'depth': depth})
+
+    return Response(serialized.data)
 
 @api_view(['GET'])
 def get_routine_exercises(request, routine):
-    queryset = Routine_has_exercise.objects.all()
-    routine_exercises = queryset.filter(routine_id = routine)
-    serializer = Routine_has_exerciseSerializer(routine_exercises)
-    print(queryset)
+    routines_objects = Routine.objects.all()
+    routine_object = routines_objects.get(id = routine)
+    exercises = routine_object.exercise.all()
+    serialized = ExerciseSerializer(exercises, many=True)
 
-    return Response(serializer.data)
+    return Response(serialized.data)
