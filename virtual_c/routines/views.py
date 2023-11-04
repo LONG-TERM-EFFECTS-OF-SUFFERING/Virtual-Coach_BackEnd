@@ -47,14 +47,8 @@ class Routine_has_exerciseView(DynamicDepthViewSet):
 def get_user_routines(request, email):
     queryset = User_has_Routine.objects.all()
     user_routines = queryset.filter(user__email = email)
-    depth = 0
-
-    try:
-        depth = int(request.query_params.get('depth', 0))
-    except ValueError:
-        pass # Ignore non-numeric parameters and keep default 0 depth
-
-    serialized = User_has_RoutineSerializer(user_routines, many=True, context={'depth': depth})
+    routines = [user_routine.routine for user_routine in user_routines]
+    serialized = RoutineSerializer(routines, many=True)
 
     return Response(serialized.data)
 
