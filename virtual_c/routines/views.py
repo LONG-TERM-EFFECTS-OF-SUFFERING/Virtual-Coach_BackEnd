@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, serializers, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -10,6 +11,8 @@ from .models import Exercise
 from .models import Routine
 from .models import User_has_Routine
 from .models import Routine_has_exercise
+
+from accounts.models import UserAccount
 
 
 class DynamicDepthViewSet(viewsets.ModelViewSet):
@@ -37,6 +40,20 @@ class RoutineView(DynamicDepthViewSet):
 class User_has_RoutineView(DynamicDepthViewSet):
     serializer_class = User_has_RoutineSerializer
     queryset = User_has_Routine.objects.all()
+    
+    def create(self, request):
+        data = request.data
+        user_id = data['user']
+        user = get_object_or_404(UserAccount, pk=user_id)
+        routine = data['routine']
+        routineSerializer = RoutineSerializer(data=routine)
+        if (routineSerializer.is_valid()):
+            routineSaved = routineSerializer.save()
+            user_has_routine = User_has_Routine(user=user, routine=routineSaved)
+            user_has_routine.save()
+            return Response(routineSerializer.data)
+        else:
+            return Response(routineSerializer.errors)
 
 class Routine_has_exerciseView(DynamicDepthViewSet):
     serializer_class = Routine_has_exerciseSerializer
