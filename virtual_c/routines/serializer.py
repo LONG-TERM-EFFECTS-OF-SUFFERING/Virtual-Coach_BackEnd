@@ -19,6 +19,14 @@ class Routine_has_exerciseSerializer(DynamicDepthSerializer):
     class Meta:
         model = Routine_has_exercise
         fields = '__all__'
+        
+# This serializer is used to retrieve a routine with its exercises
+# It is for visualization on frontend
+class RoutineExercisesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Routine_has_exercise
+        exclude = ['routine']
+        depth = 1
 
 class RoutineSerializer(DynamicDepthSerializer):
     exercises = Routine_has_exerciseSerializer(many=True, write_only=True)
