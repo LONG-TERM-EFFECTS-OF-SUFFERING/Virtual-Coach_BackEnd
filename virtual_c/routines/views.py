@@ -7,6 +7,7 @@ from .serializer import ExerciseSerializer
 from .serializer import RoutineSerializer
 from .serializer import User_has_RoutineSerializer
 from .serializer import Routine_has_exerciseSerializer
+from .serializer import RoutineExercisesSerializer
 from .models import Exercise
 from .models import Routine
 from .models import User_has_Routine
@@ -36,6 +37,15 @@ class ExerciseView(DynamicDepthViewSet):
 class RoutineView(DynamicDepthViewSet):
     serializer_class = RoutineSerializer
     queryset = Routine.objects.all()
+    
+    def retrieve(self, request, pk=None):
+        routine = get_object_or_404(Routine, pk=pk)
+        exercises = Routine_has_exercise.objects.defer("routine").filter(routine=pk)
+        serializer_exercises = RoutineExercisesSerializer(exercises, many=True)
+        serializer_routine = RoutineSerializer(routine)
+        response = serializer_routine.data
+        response['exercise'] = serializer_exercises.data
+        return Response(response)
 
 class User_has_RoutineView(DynamicDepthViewSet):
     serializer_class = User_has_RoutineSerializer
