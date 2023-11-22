@@ -13,4 +13,5 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("api/get-user-routines/<str:email>", views.get_user_routines, name='get user routines'),
     path("api/get-routine-exercises/<int:routine>", views.get_routine_exercises, name='get routine exercises'),
+    path("api/edit-routine/<int:routine>", views.edit_routine, name='edit a routine'),
 ]

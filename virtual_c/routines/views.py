@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, serializers, generics
+from rest_framework import status, viewsets, serializers, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializer import DynamicDepthSerializer
@@ -37,7 +37,7 @@ class ExerciseView(DynamicDepthViewSet):
 class RoutineView(DynamicDepthViewSet):
     serializer_class = RoutineSerializer
     queryset = Routine.objects.all()
-    
+
     def retrieve(self, request, pk=None):
         routine = get_object_or_404(Routine, pk=pk)
         exercises = Routine_has_exercise.objects.defer("routine").filter(routine=pk)
@@ -50,7 +50,7 @@ class RoutineView(DynamicDepthViewSet):
 class User_has_RoutineView(DynamicDepthViewSet):
     serializer_class = User_has_RoutineSerializer
     queryset = User_has_Routine.objects.all()
-    
+
     def create(self, request):
         data = request.data
         user_id = data['user']
@@ -95,3 +95,44 @@ def get_routine_exercises(request, routine):
     serialized = ExerciseSerializer(exercises, many=True)
 
     return Response(serialized.data)
+
+@api_view(['PATCH', 'PUT'])
+def edit_routine(request, routine):
+    request_data = request.data
+    routine_object = get_object_or_404(Routine, pk=routine)
+
+
+    if 'name' in request_data or 'description' in request_data:
+        routine_data = { 'name' : request_data['name'], 'description' : request_data['description'] }
+
+        serializer = RoutineSerializer(instance = routine_object, data = routine_data)
+
+        if serializer.is_valid():
+            serializer.save()
+        else: return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if 'exercises' in request_data:
+
+        exercises_data = request_data['exercises']
+
+        existing_exercises = routine_object.exercise.all()
+        existing_exercises_ids = [exercise.id for exercise in existing_exercises]
+
+        print(existing_exercises)
+        print(existing_exercises_ids)
+
+        for exercise_data in exercises_data:
+            exercise_id = exercise_data.get('id')
+
+            if exercise_id in existing_exercises_ids:
+                exercise = get_object_or_404(Exercise, pk=exercise_id)
+
+                serializer = ExerciseSerializer(instance = exercise, data = exercise_data)
+
+            if serializer.is_valid():
+                serializer.save()
+            else: return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    serialized = RoutineSerializer(routine_object)
+
+    return  Response(serialized.data)

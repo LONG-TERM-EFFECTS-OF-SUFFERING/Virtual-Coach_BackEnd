@@ -14,12 +14,12 @@ class ExerciseSerializer(DynamicDepthSerializer):
     class Meta:
         model = Exercise
         fields = '__all__'
-        
+
 class Routine_has_exerciseSerializer(DynamicDepthSerializer):
     class Meta:
         model = Routine_has_exercise
         fields = '__all__'
-        
+
 # This serializer is used to retrieve a routine with its exercises
 # It is for visualization on frontend
 class RoutineExercisesSerializer(serializers.ModelSerializer):
@@ -29,17 +29,31 @@ class RoutineExercisesSerializer(serializers.ModelSerializer):
         depth = 1
 
 class RoutineSerializer(DynamicDepthSerializer):
-    exercises = Routine_has_exerciseSerializer(many=True, write_only=True)
+    exercises = Routine_has_exerciseSerializer(many=True, write_only=True, required=False)
+    time = serializers.IntegerField(required=False)
+    exercises_number = serializers.IntegerField(required=False)
+
     class Meta:
         model = Routine
         fields = '__all__'
-    
+
     def create(self, validated_data):
         exercises_data = validated_data.pop('exercises')
         routine = Routine.objects.create(**validated_data)
+
         for exercise_data in exercises_data:
             Routine_has_exercise.objects.create(routine=routine, **exercise_data)
+
         return routine
+
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+
+        instance.save()
+
+        return instance
 
 class User_has_RoutineSerializer(DynamicDepthSerializer):
     class Meta:
