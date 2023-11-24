@@ -62,21 +62,12 @@ class RoutineSerializer(DynamicDepthSerializer):
             Routine_has_exercise.objects.create(routine=routine, **exercise_data)
 
         return routine
-
-
-    #def update(self, instance, validated_data):
-    #    instance.name = validated_data.get('name', instance.name)
-    #    instance.description = validated_data.get('description', instance.description)
-#
-    #    instance.save()
-#
-    #    return instance
     
     def update(self, instance, validated_data):
         exercises = validated_data.pop('exercises', [])
         created_instances, edited_instances = self.update_or_add_exercises(instance, exercises)
             
-        fields = ['name', 'description']
+        fields = ['name', 'description', 'time', 'exercises_number']
         for field in fields:
             try:
                 setattr(instance, field, validated_data[field])
