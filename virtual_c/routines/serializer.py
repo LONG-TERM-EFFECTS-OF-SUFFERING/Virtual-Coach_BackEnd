@@ -16,6 +16,7 @@ class ExerciseSerializer(DynamicDepthSerializer):
         fields = '__all__'
 
 class Routine_has_exerciseSerializer(DynamicDepthSerializer):
+    id = serializers.IntegerField(required=False)
     class Meta:
         model = Routine_has_exercise
         fields = '__all__'
@@ -29,13 +30,29 @@ class RoutineExercisesSerializer(serializers.ModelSerializer):
         depth = 1
 
 class RoutineSerializer(DynamicDepthSerializer):
-    exercises = Routine_has_exerciseSerializer(many=True, write_only=True, required=False)
+    exercises = Routine_has_exerciseSerializer(many=True, write_only=True)
     time = serializers.IntegerField(required=False)
     exercises_number = serializers.IntegerField(required=False)
 
     class Meta:
         model = Routine
         fields = '__all__'
+        
+    def update_or_add_exercises(self, instance, exercises):
+        created_instances = []
+        edited_instances = []
+        for exercise in exercises:
+            exercise['routine'] = instance
+            try:
+                exercise_instance, created = Routine_has_exercise.objects.update_or_create(pk=exercise.get('id'), defaults=exercise)
+                if created:
+                    created_instances.append(exercise_instance)
+                else:
+                    edited_instances.append(exercise_instance)
+            except Exception as e:
+                raise serializers.ValidationError({'error': str(e)})
+                
+        return (created_instances, edited_instances)
 
     def create(self, validated_data):
         exercises_data = validated_data.pop('exercises')
@@ -47,12 +64,25 @@ class RoutineSerializer(DynamicDepthSerializer):
         return routine
 
 
+    #def update(self, instance, validated_data):
+    #    instance.name = validated_data.get('name', instance.name)
+    #    instance.description = validated_data.get('description', instance.description)
+#
+    #    instance.save()
+#
+    #    return instance
+    
     def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.description = validated_data.get('description', instance.description)
-
+        exercises = validated_data.pop('exercises', [])
+        created_instances, edited_instances = self.update_or_add_exercises(instance, exercises)
+            
+        fields = ['name', 'description']
+        for field in fields:
+            try:
+                setattr(instance, field, validated_data[field])
+            except KeyError: # validated_data may not contain all fields during PATCH
+                pass
         instance.save()
-
         return instance
 
 class User_has_RoutineSerializer(DynamicDepthSerializer):
