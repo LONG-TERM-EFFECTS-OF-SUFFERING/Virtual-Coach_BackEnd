@@ -72,7 +72,6 @@ WSGI_APPLICATION = 'virtual_c.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 if 'test' in sys.argv:
-    print("Entré aquí")
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

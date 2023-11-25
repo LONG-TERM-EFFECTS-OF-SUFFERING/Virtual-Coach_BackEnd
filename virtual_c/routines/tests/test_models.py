@@ -4,8 +4,6 @@ from routines.views import *
 
 class TestModels(TestCase):
 
-  #Setup
-  #------------------------------------------------------
   def setUp(self):
 
     #Creation of Test exercise
