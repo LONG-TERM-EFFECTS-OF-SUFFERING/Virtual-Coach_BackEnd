@@ -1,4 +1,4 @@
-import os
+import os, sys
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -71,15 +71,37 @@ WSGI_APPLICATION = 'virtual_c.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
+if 'test' in sys.argv:
+    print("Entré aquí")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DATABASE_TEST_NAME'),
+            'USER': os.getenv('DATABASE_TEST_USER'),
+            'PASSWORD': os.getenv('DATABASE_TEST_PASSWORD'),
+            'HOST': os.getenv('DATABASE_TEST_HOST'),
+            'TEST': {
+                'NAME': os.getenv('DATABASE_TEST_NAME'),
+                'USER': os.getenv('DATABASE_TEST_USER'),
+                'PASSWORD': os.getenv('DATABASE_TEST_PASSWORD'),
+            }
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DATABASE_TEST_NAME'),
+            'USER': os.getenv('DATABASE_TEST_USER'),
+            'PASSWORD': os.getenv('DATABASE_TEST_PASSWORD'),
+            'HOST': os.getenv('DATABASE_TEST_HOST'),
+            'TEST': {
+                'NAME': os.getenv('DATABASE_TEST_NAME'),
+                'USER': os.getenv('DATABASE_TEST_USER'),
+                'PASSWORD': os.getenv('DATABASE_TEST_PASSWORD'),
+            }
+        }
+    }
 
 #Backend emmail data
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
