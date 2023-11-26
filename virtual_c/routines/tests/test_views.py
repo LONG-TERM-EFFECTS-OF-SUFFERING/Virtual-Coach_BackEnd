@@ -66,6 +66,12 @@ class TestRoutineView(TestCase):
     def setUp(self):
         self.client = APIClient()
 
+        self.test_user = UserAccount.objects.create_user(
+            email='testuser@example.com',
+            name='Test User',
+            password='testpassword'
+        )
+
         # Create an exercise
         self.test_exercise = Exercise.objects.create(
             name='TestExercise',
@@ -140,6 +146,19 @@ class TestRoutineView(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Routine.objects.filter(id=self.test_routine.id).exists())
 
+    #Endpoints from developer
+    def test_get_user_routines(self):
+        url = reverse('get_user_routines', args=[self.test_user.email])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_routine_exercises(self):
+        url = reverse('get_routine_exercises', args=[self.test_routine.id])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 class TestUser_has_RoutineView(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -193,9 +212,85 @@ class TestUser_has_RoutineView(TestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(User_has_Routine.objects.filter(id=user_has_routine.id).exists())
 
-
 class TestRoutine_has_exerciseView(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+        # Create an exercise
+        self.test_exercise = Exercise.objects.create(
+            name='TestExercise',
+            img_url='/TestPicture.png',
+        )
+
+        # Create a routine
+        self.test_routine = Routine.objects.create(
+            name='TestRoutine',
+            time=1,
+            description='TestDescription',
+            exercises_number=1,
+        )
+
+        # Create a routine_has_exercise instance
+        self.test_routine_has_exercise = Routine_has_exercise.objects.create(
+            routine=self.test_routine,
+            exercise=self.test_exercise,
+            repetitions=10,
+            series=3,
+            rest=60,
+        )
+
     def test_list_routine_has_exercises(self):
         url = reverse('Routine_has_exercise-list')
         response = self.client.get(url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Assert the response data based on your expected structure
+
+    def test_create_routine_has_exercise(self):
+        url = reverse('Routine_has_exercise-list')
+        new_routine_has_exercise_data = {
+            'routine': self.test_routine.id,
+            'exercise': self.test_exercise.id,
+            'repetitions': 15,
+            'series': 4,
+            'rest': 45,
+        }
+        response = self.client.post(url, new_routine_has_exercise_data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Assert the created routine_has_exercise instance
+
+    def test_read_routine_has_exercise_list(self):
+        url = reverse('Routine_has_exercise-list')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Assert the response data based on your expected structure
+
+    def test_read_single_routine_has_exercise(self):
+        url = reverse('Routine_has_exercise-detail', args=[self.test_routine_has_exercise.id])
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Assert the response data based on your expected structure
+
+    def test_update_routine_has_exercise(self):
+        url = reverse('Routine_has_exercise-detail', args=[self.test_routine_has_exercise.id])
+        updated_data = {
+            'routine': self.test_routine.id,
+            'exercise': self.test_exercise.id,
+            'repetitions': 20,
+            'series': 5,
+            'rest': 30,
+        }
+        response = self.client.put(url, updated_data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Assert the updated routine_has_exercise instance
+
+    def test_delete_routine_has_exercise(self):
+        url = reverse('Routine_has_exercise-detail', args=[self.test_routine_has_exercise.id])
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Routine_has_exercise.objects.filter(id=self.test_routine_has_exercise.id).exists())
