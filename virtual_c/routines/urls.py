@@ -2,7 +2,6 @@ from django.urls import include, path
 from rest_framework import routers
 from routines import views
 
-
 router = routers.DefaultRouter()
 router.register(r"exercise", views.ExerciseView, "Exercise")
 router.register(r"routine", views.RoutineView, "Routine")
@@ -11,7 +10,7 @@ router.register(r"Routine_has_exercise", views.Routine_has_exerciseView, "Routin
 
 urlpatterns = [
     path("api/", include(router.urls)),
-    path("api/get-user-routines/<str:email>", views.get_user_routines, name='get user routines'),
-    path("api/get-routine-exercises/<int:routine>", views.get_routine_exercises, name='get routine exercises'),
-    path("api/edit-routine/<int:routine>", views.edit_routine, name='edit a routine'),
+    path("api/get-user-routines/<str:email>", views.get_user_routines, name='get_user_routines'),
+    path("api/get-routine-exercises/<int:routine>", views.get_routine_exercises, name='get_routine_exercises'),
+    path("api/edit-routine/<int:routine>", views.edit_routine, name='edit_a_routine'),
 ]

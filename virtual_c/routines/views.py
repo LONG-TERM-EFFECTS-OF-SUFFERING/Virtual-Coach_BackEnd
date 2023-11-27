@@ -118,15 +118,11 @@ def edit_routine(request, routine):
         existing_exercises = routine_object.exercise.all()
         existing_exercises_ids = [exercise.id for exercise in existing_exercises]
 
-        print(existing_exercises)
-        print(existing_exercises_ids)
-
         for exercise_data in exercises_data:
             exercise_id = exercise_data.get('id')
 
             if exercise_id in existing_exercises_ids:
                 exercise = get_object_or_404(Exercise, pk=exercise_id)
-
                 serializer = ExerciseSerializer(instance = exercise, data = exercise_data)
 
             if serializer.is_valid():
