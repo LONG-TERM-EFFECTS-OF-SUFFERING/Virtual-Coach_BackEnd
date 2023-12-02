@@ -71,9 +71,9 @@ class Routine_has_exerciseView(DynamicDepthViewSet):
 
 
 @api_view(['GET'])
-def get_user_routines(request, email):
+def get_user_routines(request, id):
     queryset = User_has_Routine.objects.all()
-    user_routines = queryset.filter(user__email = email)
+    user_routines = queryset.filter(user__id = id)
     routines = [user_routine.routine for user_routine in user_routines]
 
     depth = 0

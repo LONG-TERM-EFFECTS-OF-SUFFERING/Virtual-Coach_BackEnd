@@ -10,7 +10,7 @@ router.register(r"Routine_has_exercise", views.Routine_has_exerciseView, "Routin
 
 urlpatterns = [
     path("api/", include(router.urls)),
-    path("api/get-user-routines/<str:email>", views.get_user_routines, name='get_user_routines'),
+    path("api/get-user-routines/<int:id>", views.get_user_routines, name='get_user_routines'),
     path("api/get-routine-exercises/<int:routine>", views.get_routine_exercises, name='get_routine_exercises'),
     path("api/edit-routine/<int:routine>", views.edit_routine, name='edit_a_routine'),
 ]
