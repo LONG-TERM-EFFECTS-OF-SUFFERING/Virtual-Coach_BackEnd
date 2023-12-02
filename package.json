@@ -1,0 +1,12 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "description": "Un proyecto de ejemplo para SonarQube",
+    "scripts": {
+      "sonar": "sonar-scanner"
+    },
+    "devDependencies": {
+      "sonarqube-scanner": "^2.7.0"
+    }
+  }
+  
