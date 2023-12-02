@@ -148,7 +148,7 @@ class TestRoutineView(TestCase):
 
     #Endpoints from developer
     def test_get_user_routines(self):
-        url = reverse('get_user_routines', args=[self.test_user.email])
+        url = reverse('get_user_routines', args=[self.test_user.id])
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
