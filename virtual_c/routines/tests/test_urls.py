@@ -22,7 +22,7 @@ class TestUrls(TestCase):
         self.assertEquals(resolve(url).func.cls, Routine_has_exerciseView)
     
     def test_url_get_user_routines(self):
-       url = reverse('get_user_routines', args=['user@example.com'])
+       url = reverse('get_user_routines', args=[1])
        self.assertEquals(resolve(url).func, get_user_routines)
 
     def test_url_get_routine_exercises(self):
