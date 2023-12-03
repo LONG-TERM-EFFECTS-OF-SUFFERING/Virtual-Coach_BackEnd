@@ -17,7 +17,7 @@ SECRET_KEY = 'django-insecure-(^vzf(j7-rh$@4de-(yr(-+w(v$uiua*(5h^&#1h)0#(d^6g*2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['virtual-coach-api.onrender.com']
 
 
 # Application definition
