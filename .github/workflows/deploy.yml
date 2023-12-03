@@ -1,0 +1,45 @@
+name: Deploy API on Render
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update ubuntu
+        run: sudo apt update
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Install pip
+        run: sudo apt install python3-pip
+
+      - name: Install requirements
+        run: pip install -r virtual_c/requirements.txt
+
+      - name: Creating env file
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Testing development server
+        run: |
+          echo "Going to virtual_c"
+          cd virtual_c
+          echo "Running tests"
+          python manage.py test --keepdb
+  
+  deploy:
+    name: Deploy
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to production
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
